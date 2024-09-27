@@ -25,7 +25,11 @@ typedef struct {
 // Função para obter o nome do tipo de partição com base no código
 const char* obter_tipo_particao(unsigned char partition_type);
 
-// Função para extrair uma entrada de partição da MBR a partir de um deslocamento
+/* Função para extrair uma entrada de partição da MBR a partir de um deslocamento:
+    - "mbr" A MBR lida do arquivo.
+    - "offset" O deslocamento dentro da MBR onde a entrada de partição começa.
+    - "entry" A estrutura PartitionEntry onde as informações serão armazenadas. 
+*/
 void extrair_entrada_particao(const unsigned char *mbr, int offset, PartitionEntry *entry);
 
 // Função para imprimir uma única entrada de partição
