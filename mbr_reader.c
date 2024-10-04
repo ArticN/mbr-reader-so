@@ -29,7 +29,6 @@ void imprimir_entrada_particao(int index, const PartitionEntry *p) {
     if (p->partition_type == 0) {
         return;
     }
-
     unsigned int tamanho_mb = (p->sectors_count * TAMANHO_SETOR) / (1024 * 1024);
 
     printf("/dev/sda%d  %s  %10u %10u %10u  %5uM  %02X  %s\n",
@@ -48,4 +47,16 @@ void imprimir_tabela_particoes(const PartitionEntry *partition_table) {
     for (int i = 0; i < NUM_PARTICOES; i++) {
         imprimir_entrada_particao(i, &partition_table[i]);
     }
+}
+
+void imprimir_informacoes_disco(unsigned int total_sectors, unsigned int *disk_id) {
+    unsigned long long total_bytes = total_sectors * (unsigned long long)TAMANHO_SETOR;
+    double total_gib = (double)total_bytes / (1024 * 1024 * 1024);
+
+    printf("Disk: %.2f GiB, %llu bytes, %u sectors\n", total_gib, total_bytes, total_sectors);
+    printf("Units: sectors of 1 * %d = %d bytes\n", TAMANHO_SETOR, TAMANHO_SETOR);
+    printf("Sector size (logical/physical): %d bytes / %d bytes\n", TAMANHO_SETOR, TAMANHO_SETOR);
+    printf("I/O size (minimum/optimal): %d bytes / %d bytes\n", TAMANHO_SETOR, TAMANHO_SETOR);
+    printf("Disklabel type: dos\n");
+    printf("Disk identifier: 0x%08x\n\n", *disk_id);
 }
