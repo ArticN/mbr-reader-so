@@ -1,141 +1,72 @@
-# Documentação - Leitor de MBR (Master Boot Record)
 
-## Sumário
-- [Documentação - Leitor de MBR (Master Boot Record)](#documentação---leitor-de-mbr-master-boot-record)
-  - [Sumário](#sumário)
-  - [Introdução](#introdução)
-  - [Estrutura dos Arquivos](#estrutura-dos-arquivos)
-    - [`mbr_reader.h`](#mbr_readerh)
-    - [`mbr_reader.c`](#mbr_readerc)
-    - [`main.c`](#mainc)
-  - [Definições de Constantes](#definições-de-constantes)
-  - [Estruturas](#estruturas)
-    - [`PartitionEntry`](#partitionentry)
-  - [Funções](#funções)
-    - [`obter_tipo_particao`](#obter_tipo_particao)
-    - [`extrair_entrada_particao`](#extrair_entrada_particao)
-    - [`imprimir_entrada_particao`](#imprimir_entrada_particao)
-    - [`imprimir_tabela_particoes`](#imprimir_tabela_particoes)
-    - [Compilação](#compilação)
-    - [Execução](#execução)
-      - [Saída Esperada](#saída-esperada)
-      - [Detalhes da Saída](#detalhes-da-saída)
+# MBR Reader - Leitura e Exibição de Tabela de Partições
 
----
+## Descrição
 
-## Introdução
-Este conjunto de arquivos permite a leitura e interpretação da Master Boot Record (MBR) de um dispositivo de armazenamento. A MBR contém informações essenciais sobre as partições do disco, como o endereço de início e o tipo de sistema de arquivos. O programa lê a MBR de um arquivo, extrai as entradas da tabela de partições e exibe essas informações de forma legível.
+Este projeto foi desenvolvido para ler e exibir informações de um arquivo MBR (Master Boot Record) a partir de uma imagem de disco binária. O programa fornece uma saída semelhante ao comando `fdisk -l` do Linux, mostrando as partições e informações do disco, como tipo de partição, início e fim dos setores, tamanho e identificador.
 
----
+## Funcionalidades
 
-## Estrutura dos Arquivos
+- Leitura de MBR de uma imagem binária.
+- Exibição das informações do disco, como:
+  - Tamanho total do disco.
+  - Tamanho de cada setor.
+  - Tipo de rótulo do disco.
+  - Identificador do disco.
+  - Tabela de partições, com informações detalhadas sobre cada partição.
+- Identificação do tipo de cada partição, como FAT12, NTFS, Linux, etc.
 
-### `mbr_reader.h`
-Contém as definições das constantes, a estrutura para a tabela de partições e os protótipos das funções utilizadas para manipular e exibir as informações da MBR.
+## Estrutura do Projeto
 
-### `mbr_reader.c`
-Implementa as funções definidas no arquivo de cabeçalho. Lida diretamente com a interpretação e exibição das entradas da tabela de partições.
+- **main.c**: Função principal que gerencia a leitura do arquivo MBR e a exibição dos dados.
+- **mbr_reader.c**: Funções auxiliares que processam e extraem informações do MBR.
+- **mbr_reader.h**: Cabeçalhos e definições usadas no projeto.
+  
+## Como Rodar
 
-### `main.c`
-Arquivo principal que executa a leitura de um arquivo MBR, utiliza as funções definidas para extrair as partições e imprimir as informações.
+### Pré-requisitos
 
----
+- Um ambiente Linux ou similar.
+- Um compilador C (como `gcc`).
+- Uma imagem de MBR (arquivo `.bin`).
 
-## Definições de Constantes
+### Passo 1: Baixar o Código
 
-- **TAMANHO_MBR**: Tamanho padrão da MBR (512 bytes).
-- **TAMANHO_ENTRADA_PARTICAO**: Tamanho de cada entrada da tabela de partições (16 bytes).
-- **DESLOCAMENTO_TABELA_PARTICOES**: Deslocamento dentro da MBR onde a tabela de partições começa (446 bytes).
-- **NUM_PARTICOES**: Número máximo de partições na tabela de partições (4).
-- **TAMANHO_SETOR**: Tamanho de um setor em bytes (512 bytes).
-- **TAMANHO_SETOR_MB**: Quantidade de setores equivalentes a 1 MB (2048 setores).
-
----
-
-## Estruturas
-
-### `PartitionEntry`
-Representa uma entrada da tabela de partições com os seguintes campos:
-- **boot_flag**: Indica se a partição é bootável (0x80) ou não (0x00).
-- **partition_type**: Tipo da partição (código hexadecimal).
-- **start_lba**: Endereço LBA (Logical Block Addressing) de início da partição.
-- **sectors_count**: Número total de setores ocupados pela partição.
-
----
-
-## Funções
-
-### `obter_tipo_particao`
-```c
-const char* obter_tipo_particao(unsigned char partition_type);
-```
-Retorna uma string que representa o nome do tipo de partição com base no código hexadecimal fornecido.
-
-    Parâmetro:
-        partition_type: Código hexadecimal do tipo de partição.
-    Retorno: Nome do tipo de partição.
-### `extrair_entrada_particao`
-```c
-void extrair_entrada_particao(const unsigned char *mbr, int offset, PartitionEntry *entry);
-```
-Extrai uma entrada de partição da MBR a partir de um deslocamento específico e armazena as informações em uma estrutura PartitionEntry.
-
-    Parâmetros:
-        mbr: Array de bytes contendo a MBR.
-        offset: Posição dentro da MBR onde a entrada de partição começa.
-        entry: Ponteiro para a estrutura onde as informações da partição serão armazenadas.
-### `imprimir_entrada_particao`
-```c
-void imprimir_entrada_particao(int index, const PartitionEntry *p);
-```
-Imprime as informações de uma entrada de partição, como o endereço inicial e final, o número de setores, o tamanho em MB, e o tipo da partição.
-
-    Parâmetros:
-        index: Índice da partição (ex: 1 para /dev/sda1).
-        p: Ponteiro para a estrutura PartitionEntry contendo as informações da partição.
-### `imprimir_tabela_particoes`
-```c
-void imprimir_tabela_particoes(const PartitionEntry *partition_table);
-```
-Imprime a tabela completa de partições, iterando sobre as entradas e chamando imprimir_entrada_particao para cada uma.
-
-    Parâmetro:
-        partition_table: Array contendo as entradas de partição.
-
-        Exemplo de Uso
-
-### Compilação
-
-Para compilar o programa, use o seguinte comando:
+Clone ou baixe o código fonte do projeto em seu computador.
 
 ```bash
-gcc -std=c99 -o mbr_reader main.c mbr_reader.c mbr_reader.h
+git clone <URL_DO_REPOSITORIO>
 ```
-### Execução
 
-Para executar o programa, forneça um arquivo binário que contenha a MBR como argumento:
+### Passo 2: Compilar o Código
+
+Dentro do diretório do projeto, compile o código com `gcc`.
 
 ```bash
-./mbr_reader mbr.bin
+gcc -o mbr_reader main.c mbr_reader.c
 ```
-#### Saída Esperada
 
-O programa imprime uma tabela com as informações das partições, similar à saída do comando fdisk:
+### Passo 3: Executar o Programa
 
-```yaml
+Para rodar o programa, basta passar o caminho de um arquivo MBR como argumento. Por exemplo:
 
-Device     Boot   Start       End        Sectors  Size   Id  Type
-/dev/sda1  *      2048       4096       2048     1M     07  NTFS/exFAT
-/dev/sda2         4097       8192       4096     2M     83  Linux
-...
+```bash
+./mbr_reader mbr_test.bin
 ```
-#### Detalhes da Saída
 
-    Device: Nome do dispositivo e partição (ex: /dev/sda1, /dev/sda2).
-    Boot: Indica se a partição é bootável (* para sim, em branco para não).
-    Start: Endereço LBA inicial da partição.
-    End: Endereço LBA final da partição.
-    Sectors: Número total de setores que a partição ocupa.
-    Size: Tamanho da partição em megabytes (calculado com base no número de setores).
-    Id: Código hexadecimal do tipo de partição.
-    Type: Nome do tipo de partição (ex: NTFS, Linux, FAT32).
+### Exemplo de Saída
+
+A saída do programa será semelhante ao seguinte:
+
+```
+Disk: 80.00 GiB, 85899345408 bytes, 167772159 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x00000000
+
+Device     Boot      Start         End      Sectors    Size   Id   Type
+-------------------------------------------------------------------------
+/dev/sda1                  1  167772159  167772159     4095M  EE    0xEE
+```

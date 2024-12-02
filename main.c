@@ -3,25 +3,25 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf("Uso: %s <arquivo_mbr>\n", argv[0]);
+        printf("Usage: %s <mbr_file>\n", argv[0]);
         return 1;
     }
 
     FILE *file = fopen(argv[1], "rb");
     if (!file) {
-        perror("Erro ao abrir arquivo");
+        perror("Error opening file");
         return 1;
     }
 
     unsigned char mbr[TAMANHO_MBR];
     if (fread(mbr, 1, TAMANHO_MBR, file) != TAMANHO_MBR) {
-        perror("Falha em ler arquivo MBR");
+        perror("Error reading MBR");
         fclose(file);
         return 1;
     }
     fclose(file);
 
-    unsigned int *disk_id = (unsigned int*)&mbr[440];
+    unsigned int *disk_id = (unsigned int *)&mbr[440];
     unsigned int total_sectors = 0;
     PartitionEntry partition_table[NUM_PARTICOES];
 
